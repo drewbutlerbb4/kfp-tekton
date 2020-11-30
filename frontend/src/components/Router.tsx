@@ -192,7 +192,7 @@ const Router: React.FC<RouterProps> = ({ configs }) => {
 
   return (
     // There will be only one instance of SideNav, throughout UI usage.
-    <SideNavLayout>
+    //<SideNavLayout>
       <Switch>
         <Route
           exact={true}
@@ -223,7 +223,7 @@ const Router: React.FC<RouterProps> = ({ configs }) => {
           </Route>
         }
       </Switch>
-    </SideNavLayout>
+    //</SideNavLayout>
   );
 };
 
