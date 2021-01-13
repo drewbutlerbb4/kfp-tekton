@@ -9,6 +9,7 @@ metadata:
   labels:
     application-crd-id: kubeflow-pipelines
     controller-tools.k8s.io: "1.0"
+    kubeflow/crd-install: "true"
   name: applications.app.k8s.io
 spec:
   group: app.k8s.io
@@ -244,6 +245,7 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     application-crd-id: kubeflow-pipelines
+    kubeflow/crd-install: "true"
   name: scheduledworkflows.kubeflow.org
 spec:
   group: kubeflow.org
@@ -265,6 +267,7 @@ kind: CustomResourceDefinition
 metadata:
   labels:
     application-crd-id: kubeflow-pipelines
+    kubeflow/crd-install: "true"
   name: viewers.kubeflow.org
 spec:
   group: kubeflow.org
@@ -1077,7 +1080,7 @@ data:
   artifact_bucket: mlpipeline
   artifact_endpoint: minio-service.kubeflow:9000
   artifact_endpoint_scheme: http://
-  artifact_image: minio/mc
+  artifact_image: minio/mc:RELEASE.2020-11-25T23-04-07Z
   artifact_script: |-
     #!/usr/bin/env sh
     push_artifact() {
@@ -1618,7 +1621,7 @@ spec:
             configMapKeyRef:
               key: archive_logs
               name: kfp-tekton-config
-        image: docker.io/aipipeline/metadata-writer:latest
+        image: docker.io/aipipeline/metadata-writer:0.4.0
         name: main
       serviceAccountName: kubeflow-pipelines-metadata-writer
 ---
@@ -1785,7 +1788,7 @@ spec:
             configMapKeyRef:
               key: inject_default_script
               name: kfp-tekton-config
-        image: docker.io/aipipeline/api-server:latest
+        image: docker.io/aipipeline/api-server:0.4.0
         imagePullPolicy: Always
         livenessProbe:
           exec:
@@ -1846,7 +1849,7 @@ spec:
               fieldPath: metadata.namespace
         - name: TTL_SECONDS_AFTER_WORKFLOW_FINISH
           value: "86400"
-        image: docker.io/aipipeline/persistenceagent:latest
+        image: docker.io/aipipeline/persistenceagent:0.4.0
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-persistenceagent
       serviceAccountName: ml-pipeline-persistenceagent
@@ -1876,7 +1879,7 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.namespace
-        image: docker.io/aipipeline/scheduledworkflow:latest
+        image: docker.io/aipipeline/scheduledworkflow:0.4.0
         imagePullPolicy: IfNotPresent
         name: ml-pipeline-scheduledworkflow
       serviceAccountName: ml-pipeline-scheduledworkflow
@@ -1920,7 +1923,7 @@ spec:
               name: mlpipeline-minio-artifact
         - name: ALLOW_CUSTOM_VISUALIZATIONS
           value: "true"
-        image: docker.io/aipipeline/frontend:latest
+        image: docker.io/aipipeline/frontend:0.4.0
         imagePullPolicy: IfNotPresent
         livenessProbe:
           exec:

@@ -8,29 +8,30 @@ and test pipelines found in the KFP repository.
 <!-- # Table of Contents -->
 
 - [Pipeline DSL Features with Native Tekton Implementation](#pipeline-dsl-features-with-native-tekton-implementation)
-    + [pod_annotations and pod_labels](#pod_annotations-and-pod_labels)
-    + [Retries](#retries)
-    + [Volumes](#volumes)
-    + [Timeout for Tasks and Pipelines](#timeout-for-tasks-and-pipelines)
-    + [RunAfter](#runafter)
-    + [Input Parameters](#input-parameters)
-    + [ContainerOp](#containerop)
-    + [Affinity, Node Selector, and Tolerations](#affinity-node-selector-and-tolerations)
-    + [ImagePullSecrets](#imagepullsecrets)
-    + [Exit Handler](#exit-handler)
+    - [pod_annotations and pod_labels](#pod_annotations-and-pod_labels)
+    - [Retries](#retries)
+    - [Volumes](#volumes)
+    - [Timeout for Tasks and Pipelines](#timeout-for-tasks-and-pipelines)
+    - [RunAfter](#runafter)
+    - [Input Parameters](#input-parameters)
+    - [ContainerOp](#containerop)
+    - [Affinity, Node Selector, and Tolerations](#affinity-node-selector-and-tolerations)
+    - [ImagePullSecrets](#imagepullsecrets)
+    - [Exit Handler](#exit-handler)
+    - [Any sequencer](#any-sequencer)
 - [Pipeline DSL Features with a Custom Tekton Implementation](#pipeline-dsl-features-with-a-custom-tekton-implementation)
-  * [Features with the Same Behavior as Argo](#features-with-the-same-behavior-as-argo)
-    + [InitContainers](#initcontainers)
-    + [Conditions](#conditions)
-    + [ResourceOp, VolumeOp, and VolumeSnapshotOp](#resourceop-volumeop-and-volumesnapshotop)
-    + [Output Parameters](#output-parameters)
-    + [Input Artifacts](#input-artifacts)
-    + [Output Artifacts](#output-artifacts)
-  * [Features with Limitations](#features-with-limitations)
-    + [ParallelFor](#parallelfor) - [Tracking issue][ParallelFor]
-    + [Variable Substitutions](#variable-substitutions) - [Tracking issue][VarSub]
-  * [Features with a Different Behavior than Argo](#features-with-a-different-behavior-than-argo)
-    + [Sidecars](#sidecars) - [Tracking issue][Sidecars]
+  - [Features with the Same Behavior as Argo](#features-with-the-same-behavior-as-argo)
+    - [InitContainers](#initcontainers)
+    - [Conditions](#conditions)
+    - [ResourceOp, VolumeOp, and VolumeSnapshotOp](#resourceop-volumeop-and-volumesnapshotop)
+    - [Output Parameters](#output-parameters)
+    - [Input Artifacts](#input-artifacts)
+    - [Output Artifacts](#output-artifacts)
+  - [Features with Limitations](#features-with-limitations)
+    - [ParallelFor](#parallelfor)
+    - [Variable Substitutions](#variable-substitutions)
+  - [Features with a Different Behavior than Argo](#features-with-a-different-behavior-than-argo)
+    - [Sidecars](#sidecars)
 
 
 # Pipeline DSL Features with Native Tekton Implementation
@@ -125,6 +126,21 @@ the [exit_handler](/sdk/python/tests/compiler/testdata/exit_handler.py) compiler
 
 The `finally` syntax is supported since Tekton version `0.14.0`.
 
+### Any sequencer
+
+When any one of the task dependencies complete successfully, the dependent task will be started. Order of execution of the dependencies doesn’t matter, and the pipeline doesn't wait for all the task dependencies to complete before moving to the next step. Please follow the details of the implementation in the [design doc](https://docs.google.com/document/d/1oXOdiItI4GbEe_qzyBmMAqfLBjfYX1nM94WHY3EPa94/edit#heading=h.dt8bhna4spym). 
+
+For example:
+
+```
+from kfp_tekton.compiler.any_sequencer import after_any
+
+dsl.ContainerOp(
+  ...
+).apply(after_any(([containerOps]))
+```
+
+Please note that the service account of the `Any Sequencer` needs 'get' premission to watch the status of the sepecified `taskRun`.
 
 # Pipeline DSL Features with a Custom Tekton Implementation
 
