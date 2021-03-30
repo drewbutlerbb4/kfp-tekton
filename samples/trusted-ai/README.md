@@ -6,17 +6,21 @@ This pipeline uses the [UTKface's aligned & cropped faces dataset](https://susan
 
 ## Prerequisites 
 - Install [KFP Tekton prerequisites](/samples/README.md)
+- If you are using the single-user deployment of Kubeflow or deployed the KFP-Tekton standalone version then create this cluster role binding.
+```shell
+kubectl create clusterrolebinding pipeline-runner-extend --clusterrole cluster-admin --serviceaccount=kubeflow:pipeline-runner
+```
 
 ## Instructions
 
 1. First, go to the Kubeflow dashboard and create a user namespace. The Kubeflow dashboard is the endpoint to your istio-ingressgateway. We will be using the namespace `anonymous` for this example.
 
-2. Compile the trusted-ai pipeline. The kfp-tekton SDK will produce a Tekton pipeline yaml definition in the same directory called `trusted-ai.yaml`.
+3. Compile the trusted-ai pipeline. The kfp-tekton SDK will produce a Tekton pipeline yaml definition in the same directory called `trusted-ai.yaml`.
 ```shell
 python trusted-ai.py
 ```
 
-3. Next, upload the `trusted-ai.yaml` file to the Kubeflow pipeline dashboard with Tekton Backend to run this pipeline.
+4. Next, upload the `trusted-ai.yaml` file to the Kubeflow pipeline dashboard with Tekton Backend to run this pipeline.
 
 Below are the metrics definition for this example:
 **Fairness Metrics**
